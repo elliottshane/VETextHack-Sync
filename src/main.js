@@ -9,5 +9,8 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: function (h) { return h(App) }
+  render: function (h) { return h(App) },
+  created() {
+    this.$store.dispatch("loadResults");
+  }
 }).$mount('#app')
