@@ -15,7 +15,7 @@
         x-large
        >
             <v-avatar  class="teal">{{results.team1Calls}}</v-avatar>
-           {{this.team1Phone}}
+           {{this.team1Phone | phone }}
           </v-chip>
          </div>
       <span class="display-2 font-weight-bold mb-3">{{results.team1Name}} - SMS</span>
@@ -36,7 +36,7 @@
        <div class="text-xl-center">
        <v-chip  align="top">
             <v-avatar  class="teal">{{results.team2Calls}}</v-avatar>
-            {{this.team2Phone}}
+            {{this.team2Phone | phone}}
           </v-chip>
          </div> 
   
@@ -63,7 +63,7 @@ export default {
     data() {
         return {
             
-            results:{
+            results_old:{
                 team1Name:"Team 1",
                 team1Calls:0,
                 team1Score:65,
@@ -81,6 +81,9 @@ export default {
        },
       team2Phone(){
          return this.$store.getters.team2Phone;
+       },
+       results(){
+         return this.$store.getters.results;
        }
     },
     mounted(){

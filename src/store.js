@@ -8,7 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     team1Phone: "9093031305",
-    team2Phone: "9093031308",
+    team2Phone: "9093031385",
     results: {
       team1Name: "Team 1",
       team1Calls: 0,
@@ -38,7 +38,6 @@ export default new Vuex.Store({
         .get("https://jasmine-gull-2964.twil.io/sync-token?key="+config.key)
         .then(function(response){
           console.log(response)
-         // var syncClient = new Twilio.Sync.Client(response.data.token, { logLevel: 'info' });
           var syncClient = new SyncClient(response.data.token);
          
           syncClient.list('VETextHack').then(function (list) {
@@ -48,15 +47,18 @@ export default new Vuex.Store({
              
               console.log(respData);
               commit('setResults', respData)
-             // return callData;
-            /* let results ={};
-              let team1 = respData.filter((item) => item.number === '+1' + state.team1Phone);
-              let team2 = respData.filter((item) => item.number === '+1' + state.team2Phone);
-              results.team1calls = team1.length;
-              results.team2calls = team2.length;
-              results.team1SMSScore = team1.reduce(function(a,b){return Number(a) + Number(b.score);},0);
-              results.team2SMSScore = team2.reduce(function (a, b) {return Number(a) + Number(b.score); }, 0);
-              console.log(results);*/
+
+              console.log(list)
+              list.on('itemAdded', function (e) {
+                console.log('Added');
+                list.getItems().then(function (listData) {
+                   respData = listData.items.map(item => item.data.value);
+                  commit("setResults", respData);
+                  console.log(respData);
+                });
+              })
+              
+            
             })
         
         
