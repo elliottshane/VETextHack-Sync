@@ -32,7 +32,7 @@
       color="warning"
       height="20"
       :value="results.team1Score"
-    ></v-progress-linear>
+    >{{results.team1Score}}</v-progress-linear>
        <div class="text-xl-center">
        <v-chip  align="top">
             <v-avatar  class="teal">{{results.team2Calls}}</v-avatar>

@@ -3,7 +3,10 @@ import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
 
+Vue.component('apexchart', VueApexCharts)
 Vue.config.productionTip = false
 Vue.filter('phone', function (phone) {
   return phone.replace(/[^0-9]/g, '')

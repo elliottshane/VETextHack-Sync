@@ -29,42 +29,34 @@ export default new Vuex.Store({
       state.results.team2Calls = team2.length;
       state.results.team1SMSScore = team1.reduce(function (a, b) { return Number(a) + Number(b.score); }, 0);
       state.results.team2SMSScore = team2.reduce(function (a, b) { return Number(a) + Number(b.score); }, 0);
-      console.log(state.results);
+      //console.log(state.results);
       }
   },
   actions: {
-    loadResults({dispatch,commit,state}){
+    loadResults({commit}){
       axios
         .get("https://jasmine-gull-2964.twil.io/sync-token?key="+config.key)
         .then(function(response){
-          console.log(response)
+        
           var syncClient = new SyncClient(response.data.token);
          
           syncClient.list('VETextHack').then(function (list) {
            
             list.getItems().then(function (listData) {
               var respData = listData.items.map(item => item.data.value);
-             
-              console.log(respData);
-              commit('setResults', respData)
-
-              console.log(list)
+           
+              commit('setResults', respData);
               list.on('itemAdded', function (e) {
-                console.log('Added');
-                list.getItems().then(function (listData) {
-                   respData = listData.items.map(item => item.data.value);
-                  commit("setResults", respData);
-                  console.log(respData);
-                });
-              })
-              
-            
-            })
-        
-        
-        })
-    })
 
+                list.getItems().then(function (listData) {
+                respData = listData.items.map(item => item.data.value);
+                console.log(respData);
+                commit("setResults", respData);
+                });
+              });
+            });
+        });
+    });
   }
 },
 getters:{
@@ -76,7 +68,19 @@ getters:{
     },
     results(state){
       return state.results;
+    },
+    team1SMSScore(state){
+      return state.results.team1SMSScore;
+    },
+    team2SMSScore(state) {
+      return state.results.team2SMSScore;
+    },
+    team1Score(state) {
+      return state.results.team1Score;
+    },
+    team2Score(state) {
+      return state.results.team2Score;
     }
-    
+      
 }
 })
