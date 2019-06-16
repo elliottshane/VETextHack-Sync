@@ -12,23 +12,39 @@ export default new Vuex.Store({
     results: {
       team1Name: "Team 1",
       team1Calls: 0,
-      team1Score: 65,
-      team1SMSScore: 75,
+      team1Score: 0,
+      team1SMSScore: 0,
       team2Name: "Team 2",
-      team2Calls: 3,
-      team2SMSScore: 50,
-      team2Score: 80
+      team2Calls: 0,
+      team2SMSScore: 0,
+      team2Score: 0
     }
   },
   mutations: {
       setResults(state,payload){
 
-      let team1 = payload.filter((item) => item.number === '+1' + state.team1Phone);
-      let team2 = payload.filter((item) => item.number === '+1' + state.team2Phone);
+      let team1 = payload.filter(function(item){
+        return item.number === '+1' + state.team1Phone && item.hasOwnProperty('score');
+      }); 
+      let team2 = payload.filter(function (item) {
+        return item.number === '+1' + state.team2Phone && item.hasOwnProperty('score');
+      }); 
+      let team1J = payload.filter(function (item) {
+        return item.number === '+1' + state.team1Phone && item.hasOwnProperty('Jscore');
+      });
+      let team2J = payload.filter(function (item) {
+        return item.number === '+1' + state.team2Phone && item.hasOwnProperty('Jscore');
+      }); 
+     
       state.results.team1Calls = team1.length;
       state.results.team2Calls = team2.length;
       state.results.team1SMSScore = team1.reduce(function (a, b) { return Number(a) + Number(b.score); }, 0);
       state.results.team2SMSScore = team2.reduce(function (a, b) { return Number(a) + Number(b.score); }, 0);
+      console.log(team1J,team2J)
+      state.results.team1Score = team1J.reduce(function (a, b) { return Number(a) + Number(b.Jscore); }, 0);
+      state.results.team2Score = team2J.reduce(function (a, b) { return Number(a) + Number(b.Jscore); }, 0);
+
+      
       //console.log(state.results);
       }
   },

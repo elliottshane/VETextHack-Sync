@@ -1,15 +1,16 @@
-
 <template>
-<v-container>
-    <v-layout
+
+  <div id="chart">
+      <apexchart type=bar height=350 :options="chartOptions" :series="series" />
+ <v-layout
       text-xl-Left
       wrap
     >
-    <v-flex xs12>
-  <div>
-   
-   
-       <div class="text-center">
+    <v-flex xs6>
+ <div id="text-label" class="text-center" style="font:48px">
+   <h1>
+       {{results.team1Name}}
+</h1>
        <v-chip
        class="ma-2"
         x-large
@@ -18,83 +19,166 @@
            {{this.team1Phone | phone }}
           </v-chip>
          </div>
-      <span class="display-2 font-weight-bold mb-3">{{results.team1Name}} - SMS</span>
-  
-    <v-progress-linear
-      color="warning"
-      height="20"
-      :value="results.team1SMSScore"
-    ></v-progress-linear>
-    
-      <span class="display-2 font-weight-bold mb-3">{{results.team1Name}} - Judges</span>
- 
-    <v-progress-linear
-      color="warning"
-      height="20"
-      :value="results.team1Score"
-    >{{results.team1Score}}</v-progress-linear>
-       <div class="text-xl-center">
+    </v-flex>
+     <v-flex xs6>
+  <div class="text-xl-center">
+    <h1>
+    {{results.team2Name}}
+    </h1>
        <v-chip  align="top">
             <v-avatar  class="teal">{{results.team2Calls}}</v-avatar>
             {{this.team2Phone | phone}}
           </v-chip>
          </div> 
-  
-      <span class="display-2 font-weight-bold mb-3">{{results.team2Name}} - SMS</span>
-  <v-progress-linear
-      color="error"
-      height="20"
-      :value="results.team2SMSScore"
-    ></v-progress-linear>
-          <span class="display-2 font-weight-bold mb-3">{{results.team2Name}} - Judges</span>
-    <v-progress-linear
-      color="error"
-      height="20"
-      :value="results.team2Score"
-    ></v-progress-linear>
-    
-  </div>
-    </v-flex>
-    </v-layout>
-</v-container>
+     </v-flex>
+ </v-layout>
+    </div>
+     
 </template>
+
 <script>
+
 export default {
     data() {
         return {
-            
-            results_old:{
-                team1Name:"Team 1",
-                team1Calls:0,
-                team1Score:65,
-                team1SMSScore:75,
-                team2Name:"Team 2",
-                team2Calls:3,
-                team2SMSScore:50,
-                team2Score:80
+        
+        
+        series: [{name:'SMS',
+          data: [0,0]
+        },{name:'Judge',data:[0,0]}],
+       
+        chartOptions: { 
+           chart: {
+                height: 350,
+                type: 'bar',
+                stacked: true,
+                  offsetX: 10,
+                sparkline: {
+                  enabled: false
+                },
+                toolbar:{
+                  show:false,
+                  
+                }  
+            },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+               dataLabels: {
+                position: 'top'
+              }
             }
-        }
-    },
-    computed:{
-       team1Phone(){
+          },
+          dataLabels: {
+            enabled: true,
+            style: {
+              fontSize: '25px',
+            },
+          },
+          yaxis:{
+            labels: {
+              show: true,
+              align: 'left',
+              offsetX: 15,
+              style:{
+                fontSize: '55px'
+              }
+            },
+            axisBorder: {
+                show: false,
+                color: '#78909C',
+                offsetX: 0,
+                offsetY: 0
+            },
+          },
+          legend: {
+            show: true,
+             style: {
+              fontSize: '50px',
+            },
+          },
+          xaxis: {
+            categories: ['Team1', 'Team2'
+            ],
+            labels: {
+              show: false,
+              style:{
+                fontSize: '55px'
+              }
+            },
+            axisBorder: {
+              show: true,
+            },
+             axisTicks: {
+            show: false,
+             }
+          }
+        },
+       
+     }
+},
+computed:{
+      team1Phone(){
          return this.$store.getters.team1Phone;
        },
       team2Phone(){
          return this.$store.getters.team2Phone;
        },
-       results(){
+      results(){
          return this.$store.getters.results;
+       },
+      team1SMSScore(){
+         return this.$store.getters.team1SMSScore;
+       },
+      team2SMSScore(){
+         return this.$store.getters.team2SMSScore;
+       },
+      team1Score(){
+         return this.$store.getters.team1Score;
+       },
+      team2Score(){
+         return this.$store.getters.team2Score;
        }
     },
-    mounted(){
-      console.log('phone: ',this.team1Phone)
+    watch:{
+      results(value){
+          console.log('watch-results',value);
+         
+      },
+      team1SMSScore(value){
+          console.log('watch-team1SMSScore',value);
+          this.updateChart()
+         
+      },
+      team2SMSScore(value){
+          console.log('watch-team2SMSScore',value);
+          this.updateChart()
+      },
+      team1Score(value){
+          console.log('watch-team1Score',value);
+          this.updateChart()
+         
+      },
+      team2Score(value){
+          console.log('watch-team2Score',value);
+          this.updateChart()
+      }
+    },
+    methods:{
+       updateChart() {
+        this.series = [{name:'SMS',
+          data: [this.team1SMSScore,this.team2SMSScore]
+          },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+        }
 
+    },
+    mounted(){
+       this.updateChart()
     }
 }
-
 </script>
-
 <style>
+
 .v-chip .v-avatar {
     height: 42px!important;
     width: 42px!important;
@@ -111,4 +195,10 @@ export default {
     font-size: 28px;
 }
 
+.flex.xs6 {
+    padding-left: 10px;
+}
+h1 {
+  padding-left: 10px;
+}
 </style>

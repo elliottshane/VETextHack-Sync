@@ -147,33 +147,33 @@ computed:{
       },
       team1SMSScore(value){
           console.log('watch-team1SMSScore',value);
-          this.series = [{name:'SMS',
-          data: [this.team1SMSScore,this.team2SMSScore]
-        },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+          this.updateChart()
          
       },
       team2SMSScore(value){
           console.log('watch-team2SMSScore',value);
-          this.series = [{name:'SMS',
-          data: [this.team1SMSScore,this.team2SMSScore]
-        },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+          this.updateChart()
       },
       team1Score(value){
           console.log('watch-team1Score',value);
-          this.series = [{name:'SMS',
-          data: [this.team1SMSScore,this.team2SMSScore]
-        },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+          this.updateChart()
          
       },
       team2Score(value){
           console.log('watch-team2Score',value);
-          this.series = [{name:'SMS',
-          data: [this.team1SMSScore,this.team2SMSScore]
-        },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+          this.updateChart()
       }
     },
+    methods:{
+       updateChart() {
+        this.series = [{name:'SMS',
+          data: [this.team1SMSScore,this.team2SMSScore]
+          },{name:'Judge',data:[this.team1Score,this.team2Score]}]
+        }
+
+    },
     mounted(){
-     
+       this.updateChart()
     }
 }
 </script>
