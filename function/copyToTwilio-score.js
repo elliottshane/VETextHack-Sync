@@ -4,11 +4,14 @@
    Shane.elliott@gmail.com
 */
 const sync = Runtime.getSync();
+let path = Runtime.getFunctions()['auth2'].path;
+let auth = require(path);
+
+//	console.log(auth.check(event.From))
+//	if(auth.check(event.From)){
 
 exports.handler = async function (context, event, callback) {
     let twiml = new Twilio.twiml.MessagingResponse();
-
-
 
     if (isNaN(event.Body)) {
 
@@ -18,50 +21,59 @@ exports.handler = async function (context, event, callback) {
         console.log('opts:', opts);
         switch (opts[0]) {
             case 'list':
+                console.log(auth.check(event.From))
+                if (auth.check(event.From)) {
+                    await sync.syncLists('VETextHack')
+                        .syncListItems
+                        .list()
+                        .then(function (data) {
+                            console.log('data', data[0].data)
+                            //Stopped here listing data (Not sure why I need this but started on it should finish)
 
-                await sync.syncLists('VETextHack')
-                    .syncListItems
-                    .list()
-                    .then(function (data) {
-                        console.log('data', data[0].data)
-                        //Stopped here listing data (Not sure why I need this but started on it should finish)
-
-                        twiml.message('resp');
-                        callback(null, twiml);
-                    })
+                            twiml.message('resp of list when I get back to it.');
+                            callback(null, twiml);
+                        })
+                } else {
+                    twiml.message('No Permissions for this!');
+                    callback(null, twiml);
+                }
 
                 break;
             case 'j':
 
-                console.log('j', opts[1])
+                console.log(auth.check(event.From))
+                if (auth.check(event.From)) {
+                    var fracTest = (opts[1] - Math.floor(opts[1])) !== 0;
 
-                var fracTest = (opts[1] - Math.floor(opts[1])) !== 0;
+                    const score = opts[1];
+                    if (!fracTest) {
+                        if (0 < score && score < 11) {
+                            //add score
+                            let payload = {
+                                number: event.To,
+                                Jscore: Number(score)
+                            };
+                            sync.lists('VETextHack').syncListItems.create({
+                                data: payload
+                            }).then(function (result) {
 
-                const score = opts[1];
-                if (!fracTest) {
-                    if (0 < score && score < 11) {
-                        //add score
-                        let payload = {
-                            number: event.To,
-                            Jscore: Number(score)
-                        };
-                        sync.lists('VETextHack').syncListItems.create({
-                            data: payload
-                        }).then(function (result) {
-
-                            twiml.message("Judge Score Set for: " + event.To);
+                                twiml.message("Judge Score Set for: " + event.To);
+                                callback(null, twiml);
+                            }).catch(function (error) {
+                                console.log(error)
+                            })
+                        } else {
+                            //send error
+                            twiml.message("Please provide a number between 1 and 10");
                             callback(null, twiml);
-                        }).catch(function (error) {
-                            console.log(error)
-                        })
-                    } else {
-                        //send error
-                        twiml.message("Please provide a number between 1 and 10");
+                        }
+                    }
+                    else {
+                        twiml.message("Please provide a WHOLE number between 1 and 10");
                         callback(null, twiml);
                     }
-                }
-                else {
-                    twiml.message("Please provide a WHOLE number between 1 and 10");
+                } else {
+                    twiml.message('No Permissions for this!');
                     callback(null, twiml);
                 }
 
@@ -123,5 +135,7 @@ exports.handler = async function (context, event, callback) {
             callback(null, twiml);
         }
     }
+
+
 
 };
